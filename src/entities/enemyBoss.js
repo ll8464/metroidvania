@@ -1,3 +1,7 @@
+import { makeNotificationBox } from "../ui/notificationBox.js";
+import { makeBlink } from "./entitySharedLogic.js";
+import { state, statePropsEnum } from "../state/globalStateManger.js";
+
 export function makeBoss(k, initialPos) {
   return k.make([
     k.pos(initialPos),
@@ -20,15 +24,22 @@ export function makeBoss(k, initialPos) {
       fireRange: 40,
       fireDuration: 1,
       setBehavior() {
+        const player = k.get("player", { recursive: true })[0];
+
         this.onStateUpdate("idle", () => {
           if (state.current().playerInBossFight) {
             this.enterState("follow");
           }
         });
+
         this.onStateEnter("follow", () => this.play("run"));
+
         this.onStateEnter("follow", () => {
           this.flipX = player.pos.x <= this.pos.x;
-          this.moveTo(k.vec2(player.pos.x, player.pos.y), this.pursuitSpeed);
+          this.moveTo(
+            k.vec2(player.pos.x, player.pos.y + 12),
+            this.pursuitSpeed
+          );
 
           if (this.pos.dist(player.pos) < this.fireRange) {
             this.enterState("open-fire");
