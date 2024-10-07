@@ -95,11 +95,11 @@ export function setMapColliders(k, map, colliders) {
       });
       bossBarrier.onCollideEnd("player", () => {
         const currentState = state.current();
-        if (currentState.playerInBossFight || currentState.isBossDefeated) {
-          state.set(statePropsEnum.playerInBossFight, true);
-          bossBarrier.activate();
-          bossBarrier.use(k.body({ isStatic: true }));
-        }
+        if (currentState.playerInBossFight || currentState.isBossDefeated)
+          return;
+        state.set(statePropsEnum.playerInBossFight, true);
+        bossBarrier.activate();
+        bossBarrier.use(k.body({ isStatic: true }));
       });
       continue;
     }
